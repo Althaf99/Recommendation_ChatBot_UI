@@ -19,7 +19,7 @@
   }
   
   .sign-in__wrapper form {
-    width: 24rem;
+    width: 44rem;
     max-width: 90%;
     z-index: 1;
     animation: showSignInForm 1s;
@@ -30,7 +30,7 @@
   }
 
   .register_button {
-    margin-top: 10px;
+    margin-top: 35px; 
   }
   
   @keyframes showSignInForm {

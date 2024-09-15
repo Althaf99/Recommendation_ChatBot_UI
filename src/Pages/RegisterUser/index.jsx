@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import Logo from "../../pictures/ChatbotIcon.jpg";
 import { Form, Button, Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [emai, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [picture, setPicture] = useState(null);
@@ -46,8 +46,10 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
       <Modal
         show={showDialogBox}
         onHide={() => setShowDialogBox(false)}
-        dialogClassName="modal-90w"
-        aria-labelledby="example-custom-modal-styling-title"
+        dialogClassName="modal-100w"
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-custom-modal-styling-title">
@@ -56,15 +58,9 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
         </Modal.Header>
         <Modal.Body>
           <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
-            <img
-              className="img-thumbnail mx-auto d-block mb-2"
-              width={100}
-              src={Logo}
-              alt="logo"
-            />
             {show ? (
               <Alert
-                className="mb-2"
+                className="mb-4"
                 variant="danger"
                 onClose={() => setShow(false)}
                 dismissible
@@ -74,7 +70,7 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
             ) : (
               <div />
             )}
-            <Form.Group className="mb-2" controlId="username">
+            <Form.Group className="mb-4" controlId="username">
               <Form.Label>Username</Form.Label>
               <Form.Control
                 type="text"
@@ -84,7 +80,17 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-2" controlId="password">
+            <Form.Group className="mb-4" controlId="email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="text"
+                value={emai}
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-4" controlId="password">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
@@ -94,7 +100,7 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-2" controlId="formPicture">
+            <Form.Group className="mb-4" controlId="formPicture">
               <Form.Label>Upload Picture</Form.Label>
               {/* <Form.File
                 label="Choose a picture"
@@ -102,8 +108,7 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
                 onChange={handlePictureChange}
                 required
               /> */}
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Default file input example</Form.Label>
+              <Form.Group controlId="formFile" className="mb-4">
                 <Form.Control
                   type="file"
                   onChange={handlePictureChange}
@@ -111,40 +116,37 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
                 />
               </Form.Group>
               {picturePreview && (
-                <div className="mt-3">
+                <div className="mt-3 center">
                   <img
                     src={picturePreview}
                     alt="Profile Preview"
                     style={{
-                      width: "100px",
-                      height: "100px",
+                      width: "250px",
+                      height: "250px",
                       objectFit: "cover",
                     }}
                   />
                 </div>
               )}
             </Form.Group>
-            {!loading ? (
-              <Button
-                className="w-100"
-                variant="primary"
-                type="submit"
-                disabled={disableLogin}
-              >
-                Sign Up
-              </Button>
-            ) : (
-              <Button
-                className="w-100"
-                variant="primary"
-                type="submit"
-                disabled
-              >
-                Logging In...
-              </Button>
-            )}
           </Form>
         </Modal.Body>
+        <Modal.Footer>
+          {!loading ? (
+            <Button
+              className="w-100"
+              variant="primary"
+              type="submit"
+              disabled={disableLogin}
+            >
+              Sign Up
+            </Button>
+          ) : (
+            <Button className="w-100" variant="primary" type="submit" disabled>
+              Logging In...
+            </Button>
+          )}
+        </Modal.Footer>
       </Modal>
     </>
   );

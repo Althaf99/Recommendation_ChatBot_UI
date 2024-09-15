@@ -16,11 +16,19 @@ import "./chatbot.css";
 import Logo from "../../pictures/ChatbotIcon.jpg";
 import headingLogo from "../../pictures/chatbotLogo.png";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon } from "@fortawesome/free-regular-svg-icons";
+
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [theme, setTheme] = useState("light");
 
-  const sessionId = "unique-session-id"; // Replace with a dynamically generated session ID if needed.
+  const sessionId = "unique-session-id";
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -48,7 +56,7 @@ const ChatBot = () => {
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        ...botResponses.map((res) => ({ sender: "bot", text: res.text })),
+        ...botResponses?.map((res) => ({ sender: "bot", text: res.text })),
       ]);
     } catch (error) {
       console.error("Error:", error);
@@ -66,80 +74,105 @@ const ChatBot = () => {
 
   return (
     <>
-      <Navbar className="bg-body-tertiary" bg="light" data-bs-theme="light">
-        <Navbar.Brand>
-          <div class="container text-center">
-            <div class="row">
-              <div class="col">
-                <Image
-                  // className="img-thumbnail mx-auto d-block mb-2"
-                  src={headingLogo}
-                  alt="logo"
-                  roundedCircle
-                  width="60"
-                  height="60"
-                />
-              </div>
-              <div class="col">
-                <h1>Immigration Chatbot</h1>
-              </div>
-            </div>
-          </div>
-        </Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
-          <h5 style={{ paddingTop: "10px" }}>UserName</h5>
-          <Navbar.Text className="account-section">
-            <Image
-              // className="img-thumbnail mx-auto d-block mb-2"
-              src={Logo}
-              alt="logo"
-              roundedCircle
-              width="60"
-              height="60"
-            />
-          </Navbar.Text>
-        </Navbar.Collapse>
-      </Navbar>
-      <Container fluid className="vh-100 d-flex flex-column">
-        <Row className="justify-content-center align-items-center flex-grow-1">
-          <Card
-            className="card-section"
-            style={{ width: "100%", maxWidth: "90%" }}
-          >
-            <Card.Header>University Recommendation Chatbot</Card.Header>
-            <Card.Body className="d-flex flex-column">
-              <div className="flex-grow-1 chat-window p-3 border rounded shadow-sm overflow-auto">
-                <div className="messages">
-                  {messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`message ${
-                        message.sender === "user"
-                          ? "user-message"
-                          : "bot-message"
-                      }`}
-                    >
-                      {message.text}
-                    </div>
-                  ))}
+      <div className={theme === "light" ? "light-theme" : "dark-theme"}>
+        <Navbar
+          className="navbar bg-body-tertiary fixed-top"
+          bg={theme}
+          data-bs-theme={theme}
+          style={{
+            marginBottom: "10px",
+            paddingRight: "30px",
+            paddingLeft: "30px",
+          }}
+        >
+          <Navbar.Brand>
+            <div className="container text-center">
+              <div className="row">
+                <div className="col">
+                  <Image
+                    src={headingLogo}
+                    alt="logo"
+                    roundedCircle
+                    width="60"
+                    height="60"
+                  />
+                </div>
+                <div className="col">
+                  <h1>Immigration Chatbot</h1>
                 </div>
               </div>
-              <InputGroup className="mt-3">
-                <FormControl
-                  placeholder="Type a message..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                />
-                <Button variant="primary" onClick={sendMessage}>
-                  Send
-                </Button>
-              </InputGroup>
-            </Card.Body>
-          </Card>
-        </Row>
-      </Container>
+            </div>
+          </Navbar.Brand>
+          <Navbar.Toggle />
+
+          <Navbar.Collapse className="justify-content-end">
+            <div style={{ paddingRight: "90px" }}>
+              <Button
+                variant={theme === "light" ? "dark" : "light"}
+                onClick={toggleTheme}
+                style={{ marginLeft: "10px" }}
+              >
+                <FontAwesomeIcon icon={faMoon} />
+              </Button>
+            </div>
+            <h5 style={{ paddingTop: "10px", paddingRight: "10px" }}>
+              UserName
+            </h5>
+            <Navbar.Text className="account-section">
+              <Image
+                src={Logo}
+                alt="logo"
+                roundedCircle
+                width="60"
+                height="60"
+              />
+            </Navbar.Text>
+          </Navbar.Collapse>
+        </Navbar>
+
+        <Container
+          fluid
+          className="d-flex flex-column"
+          style={{ marginTop: "80px", height: "calc(100vh - 80px)" }}
+        >
+          <Row className="justify-content-center align-items-center flex-grow-1">
+            <Card
+              className="card-section"
+              style={{ width: "100%", maxWidth: "99%" }}
+            >
+              <Card.Body className="d-flex flex-column">
+                <div className="flex-grow-1 chat-window p-3 border rounded shadow-sm overflow-auto">
+                  <div className="messages">
+                    {messages.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`message ${
+                          message.sender === "user"
+                            ? "user-message"
+                            : "bot-message"
+                        }`}
+                      >
+                        {message.text}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <InputGroup className="mt-3">
+                  <FormControl
+                    placeholder="Type a message..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                  />
+                  <Button variant="primary" onClick={sendMessage}>
+                    Send
+                  </Button>
+                </InputGroup>
+              </Card.Body>
+            </Card>
+          </Row>
+        </Container>
+      </div>
     </>
   );
 };

@@ -41,17 +41,16 @@ const Login = () => {
         className="sign-in__wrapper"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
-        <div className="sign-in__backdrop"></div>
         <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
           <img
-            className="img-thumbnail mx-auto d-block mb-2"
+            className="img-thumbnail mx-auto d-block mb-3"
             src={Logo}
             alt="logo"
           />
-          <div className="h4 mb-2 text-center">Sign In</div>
+          <div className="h4 mb-3 text-center">Sign In</div>
           {show ? (
             <Alert
-              className="mb-2"
+              className="mb-3"
               variant="danger"
               onClose={() => setShow(false)}
               dismissible
@@ -61,7 +60,7 @@ const Login = () => {
           ) : (
             <div />
           )}
-          <Form.Group className="mb-2" controlId="username">
+          <Form.Group className="mb-4" controlId="username">
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
@@ -71,7 +70,7 @@ const Login = () => {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-2" controlId="password">
+          <Form.Group className="mb-4" controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
@@ -95,13 +94,15 @@ const Login = () => {
               Logging In...
             </Button>
           )}
-          <Button
-            className="w-100 register_button"
-            variant="primary"
-            onClick={() => setShowDialogBox(true)}
-          >
-            Register User
-          </Button>
+          <div className="d-flex justify-content-end">
+            <Button
+              className="w-30 register_button"
+              variant="primary"
+              onClick={() => setShowDialogBox(true)}
+            >
+              Register User
+            </Button>
+          </div>
         </Form>
       </div>
       <RegisterUser
