@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-
+import axios from "axios";
 import { Form, Button, Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+
 const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [emai, setEmail] = useState("");
+  const [inputEmail, setInputEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const [picture, setPicture] = useState(null);
+  const [inputPicture, setInputPicture] = useState(null);
   const [picturePreview, setPicturePreview] = useState("");
 
   const handlePictureChange = (e) => {
     const file = e.target.files[0];
-    setPicture(file);
+    setInputPicture(file);
 
     // Preview the selected image
     const reader = new FileReader();
@@ -23,15 +24,33 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    await delay(500);
-    console.log(`Username :${inputUsername}, Password :${inputPassword}`);
-    if (inputUsername !== "admin" || inputPassword !== "admin") {
-      setShow(true);
+  console.log("inputPicture", inputPicture);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Create a FormData object
+    const formData = new FormData();
+    formData.append("username", inputUsername);
+    formData.append("email", inputEmail);
+    formData.append("password", inputPassword);
+    // formData.append("picture", inputPicture);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/register",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error registering user:", error);
     }
-    setLoading(false);
   };
 
   function delay(ms) {
@@ -51,13 +70,13 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="example-custom-modal-styling-title">
-            Register User
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
+        <Form className="shadow p-4 bg-white rounded" onSubmit={handleSubmit}>
+          <Modal.Header closeButton>
+            <Modal.Title id="example-custom-modal-styling-title">
+              Register User
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             {show ? (
               <Alert
                 className="mb-4"
@@ -84,9 +103,9 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="text"
-                value={emai}
+                value={inputEmail}
                 placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setInputEmail(e.target.value)}
                 required
               />
             </Form.Group>
@@ -103,7 +122,7 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
             <Form.Group className="mb-4" controlId="formPicture">
               <Form.Label>Upload Picture</Form.Label>
               {/* <Form.File
-                label="Choose a picture"
+                label="Choose a inputPicture"
                 custom
                 onChange={handlePictureChange}
                 required
@@ -129,24 +148,29 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
                 </div>
               )}
             </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          {!loading ? (
-            <Button
-              className="w-100"
-              variant="primary"
-              type="submit"
-              disabled={disableLogin}
-            >
-              Sign Up
-            </Button>
-          ) : (
-            <Button className="w-100" variant="primary" type="submit" disabled>
-              Logging In...
-            </Button>
-          )}
-        </Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer>
+            {!loading ? (
+              <Button
+                className="w-100"
+                variant="primary"
+                type="submit"
+                disabled={disableLogin}
+              >
+                Sign Up
+              </Button>
+            ) : (
+              <Button
+                className="w-100"
+                variant="primary"
+                type="submit"
+                disabled
+              >
+                Logging In...
+              </Button>
+            )}
+          </Modal.Footer>
+        </Form>
       </Modal>
     </>
   );

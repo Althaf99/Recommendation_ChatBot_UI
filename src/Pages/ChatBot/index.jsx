@@ -18,6 +18,7 @@ import headingLogo from "../../pictures/chatbotLogo.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-regular-svg-icons";
+import profile from "../../pictures/profile.jpeg";
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -116,11 +117,11 @@ const ChatBot = () => {
               </Button>
             </div>
             <h5 style={{ paddingTop: "10px", paddingRight: "10px" }}>
-              UserName
+              Shakir_Mohamed
             </h5>
             <Navbar.Text className="account-section">
               <Image
-                src={Logo}
+                src={profile}
                 alt="logo"
                 roundedCircle
                 width="60"
@@ -141,8 +142,8 @@ const ChatBot = () => {
               style={{ width: "100%", maxWidth: "99%" }}
             >
               <Card.Body className="d-flex flex-column">
-                <div className="flex-grow-1 chat-window p-3 border rounded shadow-sm overflow-auto">
-                  <div className="messages">
+                <div className="flex-grow-1 chat-window p-3 border rounded shadow-sm overflow-auto d-flex flex-column">
+                  <div className="messages d-flex flex-column">
                     {messages.map((message, index) => (
                       <div
                         key={index}
