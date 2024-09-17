@@ -24,41 +24,55 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
     reader.readAsDataURL(file);
   };
 
-  console.log("inputPicture", inputPicture);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a FormData object
-    const formData = new FormData();
-    formData.append("username", inputUsername);
-    formData.append("email", inputEmail);
-    formData.append("password", inputPassword);
-    // formData.append("picture", inputPicture);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/register",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error registering user:", error);
+    if (!inputPicture) {
+      console.error("Please upload a picture.");
+      return;
     }
+
+    // Read the picture as a base64 string
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Picture = reader.result; // This should include the prefix "data:image/png;base64,..."
+
+      // Construct the JSON payload
+      const payload = {
+        username: inputUsername,
+        email: inputEmail,
+        password: inputPassword,
+        picture: base64Picture, // Send the base64 data with the prefix
+      };
+
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:5000/register",
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error registering user:", error);
+      }
+    };
+
+    reader.readAsDataURL(inputPicture); // Read the file as a data URL
   };
 
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const disableLogin =
-    inputUsername.length > 0 && inputPassword.length > 0 ? false : true;
+    inputUsername.length > 0 &&
+    inputPassword.length > 0 &&
+    inputEmail.length > 0 &&
+    inputPicture
+      ? false
+      : true;
 
   return (
     <>
@@ -102,7 +116,7 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
             <Form.Group className="mb-4" controlId="email">
               <Form.Label>Email</Form.Label>
               <Form.Control
-                type="text"
+                type="email"
                 value={inputEmail}
                 placeholder="Email"
                 onChange={(e) => setInputEmail(e.target.value)}
@@ -121,12 +135,6 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
             </Form.Group>
             <Form.Group className="mb-4" controlId="formPicture">
               <Form.Label>Upload Picture</Form.Label>
-              {/* <Form.File
-                label="Choose a inputPicture"
-                custom
-                onChange={handlePictureChange}
-                required
-              /> */}
               <Form.Group controlId="formFile" className="mb-4">
                 <Form.Control
                   type="file"

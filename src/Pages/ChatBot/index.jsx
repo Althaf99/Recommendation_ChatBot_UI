@@ -42,7 +42,7 @@ const ChatBot = () => {
     setMessages([...messages, newMessage]);
 
     try {
-      const response = await fetch("http://localhost:5005/send_message", {
+      const response = await fetch("http://127.0.0.1:5000/send_message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,6 @@ const ChatBot = () => {
       ]);
     } catch (error) {
       console.error("Error:", error);
-      // Handle error in a user-friendly way
     }
 
     setInput("");
@@ -117,7 +116,7 @@ const ChatBot = () => {
               </Button>
             </div>
             <h5 style={{ paddingTop: "10px", paddingRight: "10px" }}>
-              Shakir_Mohamed
+              Shakir Mohamed
             </h5>
             <Navbar.Text className="account-section">
               <Image
