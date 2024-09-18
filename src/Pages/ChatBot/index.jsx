@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -13,19 +13,32 @@ import {
 import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./chatbot.css";
-import Logo from "../../pictures/ChatbotIcon.jpg";
 import headingLogo from "../../pictures/chatbotLogo.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-regular-svg-icons";
-import profile from "../../pictures/profile.jpeg";
+import profilePlaceholder from "../../pictures/profile.jpeg"; // Placeholder image
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [theme, setTheme] = useState("light");
+  const [username, setUsername] = useState("");
+  const [userPicture, setUserPicture] = useState(profilePlaceholder);
 
   const sessionId = "unique-session-id";
+
+  console.log("userPicture", userPicture);
+
+  useEffect(() => {
+    // Fetch user details from local storage or API
+    const userDetails = JSON.parse(localStorage.getItem("user"));
+    console.log("userDetails", userDetails);
+    if (userDetails) {
+      setUsername(userDetails.username || "User");
+      setUserPicture(userDetails.picture || profilePlaceholder);
+    }
+  }, []);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -116,15 +129,25 @@ const ChatBot = () => {
               </Button>
             </div>
             <h5 style={{ paddingTop: "10px", paddingRight: "10px" }}>
-              Shakir Mohamed
+              {username}
             </h5>
             <Navbar.Text className="account-section">
-              <Image
-                src={profile}
-                alt="logo"
+              {/* <Image
+                src={userPicture}
+                alt="User Profile"
                 roundedCircle
                 width="60"
                 height="60"
+              /> */}
+              <img
+                src={userPicture}
+                alt="Profile Preview"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  marginTop: "10px",
+                }}
               />
             </Navbar.Text>
           </Navbar.Collapse>
@@ -176,4 +199,5 @@ const ChatBot = () => {
     </>
   );
 };
+
 export default ChatBot;

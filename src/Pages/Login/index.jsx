@@ -1,39 +1,53 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-import Modal from "react-bootstrap/Modal";
+import axios from "axios";
 import "./login.css";
 
 import BackgroundImage from "../../pictures/background.jpg";
 import Logo from "../../pictures/ChatbotIcon.jpg";
 import RegisterUser from "../RegisterUser";
 
-const Login = () => {
-  const [inputUsername, setInputUsername] = useState("");
-  const [inputPassword, setInputPassword] = useState("");
+import { useNavigate } from "react-router-dom";
 
+const Login = () => {
+  const navigate = useNavigate();
+
+  const [inputEmail, setInputEmail] = useState("");
+  const [inputPassword, setInputPassword] = useState("");
   const [show, setShow] = useState(false);
   const [showDialogBox, setShowDialogBox] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    await delay(500);
-    console.log(`Username :${inputUsername}, Password :${inputPassword}`);
-    if (inputUsername !== "admin" || inputPassword !== "admin") {
+
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/login", {
+        email: inputEmail,
+        password: inputPassword,
+      });
+
+      if (response.data.error) {
+        setErrorMessage(response.data.error);
+        setShow(true);
+      } else {
+        // Save user details to local storage or context for other pages
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        navigate("/chatbot");
+        // Redirect or update UI
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setErrorMessage("An error occurred during login.");
       setShow(true);
     }
+
     setLoading(false);
   };
 
-  const handlePassword = () => {};
-
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  const disableLogin =
-    inputUsername.length > 0 && inputPassword.length > 0 ? false : true;
+  const disableLogin = !inputEmail || !inputPassword;
 
   return (
     <>
@@ -48,25 +62,23 @@ const Login = () => {
             alt="logo"
           />
           <div className="h4 mb-3 text-center">Sign In</div>
-          {show ? (
+          {show && (
             <Alert
               className="mb-3"
               variant="danger"
               onClose={() => setShow(false)}
               dismissible
             >
-              Incorrect username or password.
+              {errorMessage}
             </Alert>
-          ) : (
-            <div />
           )}
-          <Form.Group className="mb-4" controlId="username">
-            <Form.Label>Username</Form.Label>
+          <Form.Group className="mb-4" controlId="email">
+            <Form.Label>Email</Form.Label>
             <Form.Control
-              type="text"
-              value={inputUsername}
-              placeholder="Username"
-              onChange={(e) => setInputUsername(e.target.value)}
+              type="email"
+              value={inputEmail}
+              placeholder="Email"
+              onChange={(e) => setInputEmail(e.target.value)}
               required
             />
           </Form.Group>
