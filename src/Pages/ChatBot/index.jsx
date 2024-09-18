@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
-  Col,
-  Form,
   Button,
   InputGroup,
   FormControl,
@@ -31,7 +29,6 @@ const ChatBot = () => {
   console.log("userPicture", userPicture);
 
   useEffect(() => {
-    // Fetch user details from local storage or API
     const userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
     if (userDetails) {

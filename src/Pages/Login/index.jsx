@@ -33,10 +33,8 @@ const Login = () => {
         setErrorMessage(response.data.error);
         setShow(true);
       } else {
-        // Save user details to local storage or context for other pages
         localStorage.setItem("userDetails", JSON.stringify(response.data.user));
         navigate("/chatbot");
-        // Redirect or update UI
       }
     } catch (error) {
       console.error("Error logging in:", error);
