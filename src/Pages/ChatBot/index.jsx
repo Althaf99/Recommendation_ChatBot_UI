@@ -57,7 +57,7 @@ const ChatBot = () => {
     setMessages([...messages, newMessage]);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/send_message", {
+      const response = await fetch("http://127.0.0.1:5005/send_message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,6 +86,8 @@ const ChatBot = () => {
       sendMessage();
     }
   };
+
+  console.log("userPicture", userPicture);
 
   return (
     <>
