@@ -32,13 +32,15 @@ const ChatBot = () => {
 
   useEffect(() => {
     // Fetch user details from local storage or API
-    const userDetails = JSON.parse(localStorage.getItem("user"));
-    console.log("userDetails", userDetails);
+    const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+
     if (userDetails) {
-      setUsername(userDetails.username || "User");
-      setUserPicture(userDetails.picture || profilePlaceholder);
+      setUsername(userDetails.username);
+      setUserPicture(`data:image/png;base64,${userDetails.picture}`);
     }
   }, []);
+
+  console.log("userPicture", userPicture);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -132,22 +134,14 @@ const ChatBot = () => {
               {username}
             </h5>
             <Navbar.Text className="account-section">
-              {/* <Image
-                src={userPicture}
+              <Image
+                src={`data:image/jpeg;base64,${userPicture}`}
                 alt="User Profile"
+                width="50px"
+                height="50px"
+                objectFit="cover"
+                marginTop="10px"
                 roundedCircle
-                width="60"
-                height="60"
-              /> */}
-              <img
-                src={userPicture}
-                alt="Profile Preview"
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                  marginTop: "10px",
-                }}
               />
             </Navbar.Text>
           </Navbar.Collapse>

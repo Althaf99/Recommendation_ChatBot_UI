@@ -34,7 +34,7 @@ const Login = () => {
         setShow(true);
       } else {
         // Save user details to local storage or context for other pages
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("userDetails", JSON.stringify(response.data.user));
         navigate("/chatbot");
         // Redirect or update UI
       }

@@ -9,14 +9,12 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
   const [inputEmail, setInputEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const [inputPicture, setInputPicture] = useState(null);
   const [picturePreview, setPicturePreview] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const handlePictureChange = (e) => {
     const file = e.target.files[0];
-    setInputPicture(file);
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -40,139 +38,126 @@ const RegisterUser = ({ setShowDialogBox, showDialogBox }) => {
 
     if (!validatePassword(inputPassword)) {
       setPasswordError(
-        "Password must be at least 5 letters long and contain at least one symbol."
+        "Password must be at least 5 characters long and contain at least one letter and one symbol."
       );
       return;
     }
-    setPasswordError("");
+
     setLoading(true);
+    setErrorMessage("");
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const pictureData = reader.result;
+    try {
+      const base64Picture = picturePreview.split(",")[1]; // Extract Base64 part
 
-      try {
-        const response = await axios.post("http://127.0.0.1:5000/register", {
-          username: inputUsername,
-          email: inputEmail,
-          password: inputPassword,
-          picture: pictureData,
-        });
+      const response = await axios.post("http://127.0.0.1:5000/register", {
+        username: inputUsername,
+        email: inputEmail,
+        password: inputPassword,
+        picture: base64Picture,
+      });
 
-        if (response.data.error) {
-          setErrorMessage(response.data.error);
-          setShow(true);
-        } else {
-          console.log("Registration successful");
-          setShowDialogBox(false);
-        }
-      } catch (error) {
-        console.error("Error registering user:", error);
-        setErrorMessage("An error occurred during registration");
+      if (response.data.error) {
+        setErrorMessage(response.data.error);
+      } else {
         setShow(true);
+        setTimeout(() => setShow(false), 3000);
+        setInputUsername("");
+        setInputPassword("");
+        setInputEmail("");
+        setPicturePreview("");
       }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMessage("An error occurred while registering.");
+    } finally {
       setLoading(false);
-    };
-    reader.readAsDataURL(inputPicture);
+    }
   };
 
   return (
-    <Modal
-      size="lg"
-      show={showDialogBox}
-      onHide={() => setShowDialogBox(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Register User</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          {show ? (
-            <Alert
-              className="mb-4"
-              variant="danger"
-              onClose={() => setShow(false)}
-              dismissible
-            >
+    <>
+      <Modal show={showDialogBox} onHide={() => setShowDialogBox(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Register</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {show && (
+            <Alert variant="success" onClose={() => setShow(false)} dismissible>
+              User registered successfully!
+            </Alert>
+          )}
+          {errorMessage && (
+            <Alert variant="danger" onClose={() => setErrorMessage("")}>
               {errorMessage}
             </Alert>
-          ) : (
-            <div />
           )}
           {passwordError && (
-            <Alert className="mb-4" variant="danger">
+            <Alert variant="danger" onClose={() => setPasswordError("")}>
               {passwordError}
             </Alert>
           )}
-          <Form.Group controlId="username" className="mb-4">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              value={inputUsername}
-              placeholder="Username"
-              onChange={(e) => setInputUsername(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="email" className="mb-4">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              value={inputEmail}
-              placeholder="Email"
-              onChange={(e) => setInputEmail(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="password" className="mb-4">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={inputPassword}
-              placeholder="Password"
-              onChange={(e) => setInputPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="picture" className="mb-4">
-            <Form.Label>Profile Picture</Form.Label>
-            <Form.Control
-              type="file"
-              accept="image/*"
-              onChange={handlePictureChange}
-            />
-            {picturePreview && (
-              <img
-                src={picturePreview}
-                alt="Profile Preview"
-                style={{
-                  width: "250px",
-                  height: "250px",
-                  objectFit: "cover",
-                  marginTop: "10px",
-                }}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formUsername">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={inputUsername}
+                onChange={(e) => setInputUsername(e.target.value)}
+                required
               />
-            )}
-          </Form.Group>
-          {!loading ? (
-            <Button
-              className="w-100"
-              variant="primary"
-              type="submit"
-              disabled={
-                !inputUsername || !inputEmail || !inputPassword || !inputPicture
-              }
-            >
-              Register
+            </Form.Group>
+
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={inputEmail}
+                onChange={(e) => setInputEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={inputPassword}
+                onChange={(e) => setInputPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formPicture">
+              <Form.Label>Profile Picture</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handlePictureChange}
+                required
+              />
+              {picturePreview && (
+                <div className="mt-3">
+                  <img
+                    src={picturePreview}
+                    alt="Profile Preview"
+                    style={{
+                      width: "250px",
+                      height: "250px",
+                      objectFit: "cover",
+                      marginTop: "10px",
+                    }}
+                  />
+                </div>
+              )}
+            </Form.Group>
+
+            <Button variant="primary" type="submit" disabled={loading}>
+              {loading ? "Registering..." : "Register"}
             </Button>
-          ) : (
-            <Button className="w-100" variant="primary" type="submit" disabled>
-              Registering...
-            </Button>
-          )}
-        </Form>
-      </Modal.Body>
-    </Modal>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 
